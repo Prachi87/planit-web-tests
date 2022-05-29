@@ -1,0 +1,63 @@
+steps:
+  - task: NodeTool@0
+    displayName: 'Use Node 14.x'
+    inputs:
+      versionSpec: 14.x
+    
+  - task: Cache@2
+    displayName: 'Cache yarn'
+    inputs:
+      key: '"yarn" | "$(Agent.OS)" | yarn.lock'
+      restoreKeys: |
+        yarn | "$(Agent.OS)"
+        yarn
+      path: $(YARN_CACHE_FOLDER)
+    
+  - task: Cache@2
+    displayName: 'Cache Cypress'
+    inputs:
+      key: 'cypress | $(Agent.OS) | yarn.lock'
+      restoreKeys: |
+        cypress | $(Agent.OS) | yarn.lock
+      path: $(CYPRESS_CACHE_FOLDER)
+
+  - script: |
+      yarn --frozen-lockfile
+    displayName: 'Install project dependencies'
+  - script: |
+      node script/generate-config.js
+    displayName: 'Generate the Cypress config'
+    env:
+      USER: $(user)
+      PASSWORD: $(password)
+      THIRDPARTYSERVER2FAURL: $(thirdPartyServer2FAUrl)
+      THIRDPARTYSERVERURL: $(thirdPartyServerUrl)
+      BROWSER: ${{ parameters.browserType }}
+  - script: yarn run cy:run
+    displayName: 'Run Cypress tests'
+  
+  - task: PublishTestResults@2
+    displayName: 'Publish the test reports'
+    inputs:
+      testResultsFormat: "JUnit"
+      testResultsFiles: "**/test-results.*.xml"
+    condition: always()
+    continueOnError: true
+
+  - script: |
+      if [ -d "cypress/screenshots" ];
+      then
+          echo "##vso[task.setVariable variable=screenshotsExist]true"
+      else
+          echo "##vso[task.setVariable variable=screenshotsExist]false"
+      fi
+    condition: always()
+    displayName: 'Check if screenshots exist'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish screenshots when there were issues'
+    inputs:
+      pathtoPublish: 'cypress/screenshots'
+      artifactName: screenshots-${{ parameters.browserType }}
+    condition: and(always(), eq(variables.screenshotsExist, 'true'))
+    continueOnError: true

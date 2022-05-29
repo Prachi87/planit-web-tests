@@ -1,0 +1,8 @@
+{
+    "forenameRequiredError": "Forename is required",
+    "emailRequiredError": "Email is required",
+    "messageRequiredError": "Message is required",
+    "contactName": "Test Name",
+    "emailId": "testName@email.com",
+    "message": "The test message for feedback"
+}

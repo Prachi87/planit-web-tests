@@ -1,0 +1,6 @@
+{
+  "baseUrl": "http://jupiter.cloud.planittesting.com",
+  "env": {
+    "devUrl": "dev"
+  }
+}

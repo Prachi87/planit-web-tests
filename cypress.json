@@ -1,0 +1,23 @@
+{
+    "defaultCommandTimeout": 10000,
+    "responseTimeout": 40000,
+    "viewportWidth": 1080,
+    "viewportHeight": 980,
+    "chromeWebSecurity": false,
+    "screenshotOnRunFailure": true,
+    "integrationFolder": "cypress/tests",
+    "screenshotsFolder": "cypress/screenshots",
+    "videosFolder": "cypress/videos",
+    "video": false,
+    "fixtureFolder": "cypress/fixtures",
+    "downloadsFolder": "cypress/downloads",
+    "pluginsFile": "cypress/plugins/index.js",
+    "supportFile": "cypress/support/index.js",
+    "retries": 2,
+    "reporter": "./node_modules/mocha-junit-reporter",
+    "reporterOptions": {
+      "mochaFile": "cypress/report/junit/test-results.[hash].xml",
+      "testsuitesTitle": false
+    }
+}
+  

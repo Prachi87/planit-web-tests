@@ -1,0 +1,30 @@
+name: 'Cypress UI Testing'
+
+trigger:
+- main
+schedules:
+- cron: "0 21 * * 0-4"
+  displayName: Each morning for 5 days at 8 am
+  branches:
+    include:
+    - main
+  always: true
+
+variables:
+- group: vargroup-main
+- name: YARN_CACHE_FOLDER
+  value: $(Pipeline.Workspace)/.yarn
+- name: CYPRESS_CACHE_FOLDER # Overrides the default cache location
+  value: $(Pipeline.Workspace)/.cache/Cypress
+stages:
+- stage: ui_testing_stage_chrome
+  displayName: Repair UI Tests
+  jobs:
+  - job: ui_testing_stage_chrome
+    displayName: 'Run UI Tests in Chrome'
+    pool:
+          vmImage: ubuntu-latest
+    steps:
+      - template: e2e.testing.yml
+        parameters:
+          browserType: chrome
